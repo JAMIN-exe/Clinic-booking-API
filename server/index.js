@@ -45,6 +45,11 @@ async function initDb() {
       response JSONB NOT NULL
     );
     CREATE INDEX IF NOT EXISTS bookings_email_seq ON bookings (email, seq);
+    CREATE TABLE IF NOT EXISTS attempts (
+      email TEXT NOT NULL,
+      ts TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+    );
+    CREATE INDEX IF NOT EXISTS attempts_email_ts ON attempts (email, ts);
   `);
 }
 
@@ -117,6 +122,7 @@ app.post(
       await client.query("DELETE FROM bookings");
       await client.query("DELETE FROM slots");
       await client.query('DELETE FROM idempotency');
+      await client.query('DELETE FROM attempts');
       for (const s of slots) {
         await client.query(
           `INSERT INTO slots (id, provider, start_raw, end_raw, start_ts, end_ts)
@@ -200,6 +206,38 @@ async function createBooking(client, body) {
   const name = clean(body.name);
   const email = clean(body.email).toLowerCase();
 
+    // Level 5: at most 5 attempts per email per minute
+  if (email) {
+    // Take turns: requests for the same email wait for each other
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['rl:' + email]);
+
+    // Tidy up old rows
+    await client.query(
+      `DELETE FROM attempts WHERE email = $1 AND ts < clock_timestamp() - interval '5 minutes'`,
+      [email]
+    );
+
+    // How many attempts in the last minute, and how long until the oldest one expires?
+    const { rows: [rl] } = await client.query(
+      `SELECT count(*)::int AS n,
+              GREATEST(1, CEIL(EXTRACT(EPOCH FROM
+                (min(ts) + interval '60 seconds' - clock_timestamp()))))::int AS retry
+       FROM attempts
+       WHERE email = $1 AND ts > clock_timestamp() - interval '60 seconds'`,
+      [email]
+    );
+
+    if (rl.n >= 5) {
+      return {
+        status: 429,
+        retryAfter: rl.retry,
+        body: { error: 'too many booking attempts, try again later' },
+      };
+    }
+
+    await client.query('INSERT INTO attempts (email) VALUES ($1)', [email]);
+  }
+
   if (!slotId || !name || !email) {
     return { status: 400, body: { error: 'slot_id, name and email are required' } };
   }
@@ -252,7 +290,7 @@ app.post('/bookings', wrap(async (req, res) => {
 
     const result = await createBooking(client, body);
 
-    if (key) {
+    if (key && result.status !== 429) {
       await client.query(
         'INSERT INTO idempotency (key, body_hash, status, response) VALUES ($1, $2, $3, $4)',
         [key, sha(canon(body)), result.status, JSON.stringify(result.body)]
@@ -260,6 +298,7 @@ app.post('/bookings', wrap(async (req, res) => {
     }
 
     await client.query('COMMIT');
+    if (result.retryAfter) res.set('Retry-After', String(result.retryAfter));
     return res.status(result.status).json(result.body);
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
