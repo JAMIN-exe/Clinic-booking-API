@@ -1,0 +1,7 @@
+{
+  "slots": [
+    { "id": "s2", "provider": "Dr Bisi", "start": "2026-12-10T10:00:00Z", "end": "2026-12-10T10:30:00Z" },
+    { "id": "s1", "provider": "Dr Ade",  "start": "2026-12-10T09:00:00Z", "end": "2026-12-10T09:30:00Z" },
+    { "id": "old", "provider": "Dr Ade", "start": "2020-01-01T09:00:00Z", "end": "2020-01-01T09:30:00Z" }
+  ]
+}
