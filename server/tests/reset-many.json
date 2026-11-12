@@ -1,0 +1,12 @@
+{
+  "slots": [
+    { "id": "m1", "provider": "Dr Ade",  "start": "2030-01-01T09:00:00Z", "end": "2030-01-01T09:30:00Z" },
+    { "id": "m2", "provider": "Dr Ade",  "start": "2030-01-01T10:00:00Z", "end": "2030-01-01T10:30:00Z" },
+    { "id": "m3", "provider": "Dr Ade",  "start": "2030-01-01T11:00:00Z", "end": "2030-01-01T11:30:00Z" },
+    { "id": "m4", "provider": "Dr Bisi", "start": "2030-01-02T09:00:00Z", "end": "2030-01-02T09:30:00Z" },
+    { "id": "m5", "provider": "Dr Bisi", "start": "2030-01-02T10:00:00Z", "end": "2030-01-02T10:30:00Z" },
+    { "id": "m6", "provider": "Dr Bisi", "start": "2030-01-02T11:00:00Z", "end": "2030-01-02T11:30:00Z" },
+    { "id": "m7", "provider": "Dr Ade",  "start": "2030-01-03T09:00:00Z", "end": "2030-01-03T09:30:00Z" },
+    { "id": "m8", "provider": "Dr Bisi", "start": "2030-01-03T10:00:00Z", "end": "2030-01-03T10:30:00Z" }
+  ]
+}
