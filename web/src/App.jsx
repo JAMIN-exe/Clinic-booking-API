@@ -20,12 +20,13 @@ async function api(path, opts = {}) {
 }
 
 const fmt = (iso) =>
-  new Date(iso).toLocaleString([], {
+  new Date(iso).toLocaleString('en-US', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
+    hour12: true,
   });
 
 export default function App() {
@@ -166,6 +167,19 @@ export default function App() {
                 </dd>
               </div>
             )}
+                        <div>
+              <dt className="inline font-medium">Booked on: </dt>
+              <dd className="inline">
+                {new Date(booking.created_at).toLocaleString('en-US', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true,
+                })}
+              </dd>
+            </div>
             <div>
               <dt className="inline font-medium">Status: </dt>
               <dd className="inline">{booking.status}</dd>
