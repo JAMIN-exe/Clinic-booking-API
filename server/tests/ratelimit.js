@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:3000';
+const BASE = process.env.BASE || 'http://localhost:3000';
 const headers = { 'Content-Type': 'application/json', 'X-API-Key': process.env.API_KEY };
 
 const send = async (email) => {

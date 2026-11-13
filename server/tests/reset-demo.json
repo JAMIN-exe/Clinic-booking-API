@@ -1,0 +1,10 @@
+{
+  "slots": [
+    { "id": "d1", "provider": "Dr Ade",  "start": "2030-06-10T09:00:00Z", "end": "2030-06-10T09:30:00Z" },
+    { "id": "d2", "provider": "Dr Ade",  "start": "2030-06-10T10:00:00Z", "end": "2030-06-10T10:30:00Z" },
+    { "id": "d3", "provider": "Dr Ade",  "start": "2030-06-10T11:00:00Z", "end": "2030-06-10T11:30:00Z" },
+    { "id": "d4", "provider": "Dr Bisi", "start": "2030-06-11T09:00:00Z", "end": "2030-06-11T09:30:00Z" },
+    { "id": "d5", "provider": "Dr Bisi", "start": "2030-06-11T10:00:00Z", "end": "2030-06-11T10:30:00Z" },
+    { "id": "d6", "provider": "Dr Bisi", "start": "2030-06-11T11:00:00Z", "end": "2030-06-11T11:30:00Z" }
+  ]
+}
